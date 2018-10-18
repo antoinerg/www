@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <script src='http://localhost:3000/build/plotly.js'></script>
+    <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+    <style>
+      html, body {
+        margin:0; padding:0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="graph">
+    </div>
+
+    <script>
+      Plotly.d3.json("http://localhost:3000/test/image/mocks/sankey_energy.json", function(figure) {
+        var layout = Plotly.makeTemplate(figure);
+        console.log(layout);
+      window.gd = document.getElementById('graph');
+      Plotly.plot(gd,{
+        data: [
+          {x: [1,2,3], y:[4,9,3], line: {color: 'red'}}
+        ],
+        layout: {
+          margin: {
+            l: 50, r: 50, t: 50, b: 50
+          }
+        }
+      })
+    });
+
+
+    </script>
+  </body>
+</html>
