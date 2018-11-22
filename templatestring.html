@@ -10,7 +10,7 @@
         display: grid;
         height: 100vh;
         width: 100vw;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
       }
 
     </style>
@@ -20,7 +20,7 @@
     </div>
 
     <script>
-    var type = ["scatter", "violin", "bar", "box"], gds = [];
+    var type = ["scatter", "scattergl"], gds = [];
 
     var grid = document.getElementById('grid');
 
@@ -35,7 +35,9 @@
           data[j].x.push(k);
           data[j].y.push(Math.sin(2*Math.PI*10/N * k)*k**2 * (j + 1));
           data[j].type = type[i];
-          data[j].hovertemplate = '<b>%{name}</b><br>x: %{x:2.1f}<br>y: %{y:0.2f}';
+          data[j].hovertemplate = '<b>%{name}</b><br>x: %{x:2.1f}<br>y: %{y}<extra>%{name}<br><b>BOOM</b></extra>';
+          data[j].fill = "toself";
+          data[j].hoveron = "points+fills";
         };
       }
 
@@ -52,7 +54,7 @@
         config: { displayModeBar: true, responsive: false }
       })
       .then(function(g) {
-        g.on('plotly_hover', function(evt) {console.log(evt)});
+        // g.on('plotly_hover', function(evt) {console.log(evt)});
         gds.push(g);
       })
     }

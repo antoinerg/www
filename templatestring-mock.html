@@ -16,18 +16,21 @@
     <div id="graph"></div>
 
     <script>
+    Plotly.d3.json("http://localhost:3000/test/image/mocks/text_chart_arrays.json", function(figure) {
     // Plotly.d3.json("http://localhost:3000/test/image/mocks/14.json", function(figure) {
-    Plotly.d3.json("http://localhost:3000/test/image/mocks/boxplots_undefined_vals.json", function(figure) {
       delete(figure.layout.width);
       delete(figure.layout.height);
       figure.layout.autosize = true;
       figure.config = { responsive: true};
 
       figure.data.forEach(function(trace) {
+        trace.type = 'bar';
+        trace.hovertemplate = '%{y}<extra>%{name}</extra>'
         // trace.hovertemplate = '%{text}<br>GDP per capita: %{x:$.2f}<br>Life expectancy: %{y:.1f} years<br>Random: %{random}';
         // trace.hovertemplate = '%{yaxis.title}: %{y:$.2f}<br>%{xaxis.title}: %{x:e}'
         // trace.link.hoverinfo = 'skip'
-        trace.hovertemplate = '%{label}: %{y}';
+        // trace.hovertemplate = 'value: %{value}<br>percentage: %{percent:%0.2f}<extra></extra>';
+        // trace.hovertemplate = '%{y}<extra>BOOM</extra>';
       })
 
       console.log(figure);
