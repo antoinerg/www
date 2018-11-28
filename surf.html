@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      html, body {
+        margin:0; padding:0;
+      }
+      #graph {
+        width:100vw;
+        height:100vh;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="graph">
+    </div>
+
+    <script>
+      Plotly.d3.json("surf.json", function(figure) {
+        // figure.data[0].colorscale = [[0, 'rgb(255,0,0)'], [1, 'rgb(0,0,255)']];
+        figure.data[0].cmin = 0.2;
+        figure.data[0].cmax = 0.3;
+        figure.config = {
+          responsive: true
+        }
+        figure.layout = {
+          margin: {
+            l:0, r:30, t:0, b:0
+          },
+          scene: {
+            xaxis: {
+              title: 'x (nm)'
+            },
+            yaxis: {
+              title: 'y (nm)'
+            },
+            zaxis: {
+              title: 'Dissipation (Hz)',
+              range: [0.0, 0.4]
+            }
+          }
+        }
+        Plotly.plot('graph',figure)
+        window.gd = document.getElementById('graph');
+      })
+
+
+    </script>
+  </body>
+</html>
