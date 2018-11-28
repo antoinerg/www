@@ -19,10 +19,18 @@
     </div>
 
     <script>
-      Plotly.d3.json("surf.json", function(figure) {
+      Plotly.d3.json("surf.json", function(trace) {
         // figure.data[0].colorscale = [[0, 'rgb(255,0,0)'], [1, 'rgb(0,0,255)']];
-        figure.data[0].cmin = 0.2;
-        figure.data[0].cmax = 0.3;
+        figure = {
+          data: [
+            {
+              type: "surface",
+              z: trace.z,
+              cmin: 0.2,
+              cmax: 0.3
+            }
+          ]
+        }
         figure.config = {
           responsive: true
         }
