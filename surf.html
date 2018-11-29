@@ -25,9 +25,8 @@
           data: [
             {
               type: "surface",
-              z: trace.z,
-              cmin: 0.2,
-              cmax: 0.3
+              surfacecolor: trace.dissipation,
+              z: trace.frequency_shit
             }
           ]
         }
@@ -46,8 +45,8 @@
               title: 'y (nm)'
             },
             zaxis: {
-              title: 'Dissipation (Hz)',
-              range: [0.0, 0.4]
+              title: 'Frequency shift (Hz)',
+              range: [4, 10]
             }
           }
         }
