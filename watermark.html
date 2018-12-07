@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <script src='http://localhost:3001/build/plotly.js'></script>
+    <!-- uncomment below for IE9/10 support -->
+    <script>if(typeof window.Int16Array !== 'function')document.write("<scri"+"pt src='http://localhost:3000/dist/extras/typedarray.min.js'></scr"+"ipt>");</script>
+    <script>document.write("<scri"+"pt src='http://localhost:3000/dist/extras/request_animation_frame.js'></scr"+"ipt>");</script>
+
+    <script src='http://localhost:3000/dist/plotly-basic.js'></script>
     <style>
       html, body {
         margin:0; padding:0;
@@ -26,7 +30,7 @@
         margin: {t:25, b: 25, l:25, r:25}
       },
       config: {
-        displayModeBar: false,
+        displayModeBar: 'hover',
         watermark: true,
         displaylogo: false
       }

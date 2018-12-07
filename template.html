@@ -2,7 +2,7 @@
 <html lang='en'>
   <head>
     <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-1.42.1.min.js"></script>
     <style>
       html, body {
         margin:0; padding:0;
@@ -16,8 +16,14 @@
 
     <script>
       Plotly.d3.json("http://localhost:3000/test/image/mocks/sankey_energy.json", function(figure) {
-        var layout = Plotly.makeTemplate(figure);
-        console.log(layout);
+        var template = Plotly.makeTemplate(figure);
+        console.log(template);
+
+        template = {
+          colorscale: {
+            diverging:[[0,'rgb(0,0,0)'], [1, 'rgb(255,255,255)']]
+          }
+        };
       window.gd = document.getElementById('graph');
       Plotly.plot(gd,{
         data: [
@@ -26,13 +32,12 @@
         layout: {
           margin: {
             l: 50, r: 50, t: 50, b: 50
-          }
+          },
+          template: template
         },
-	config: { displayModeBar: true}
-      })
-    });
-
-
+      	config: { displayModeBar: true}
+        })
+      });
     </script>
   </body>
 </html>
