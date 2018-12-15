@@ -10,8 +10,9 @@
       }
       #grid {
         display: grid;
-        width: 100vw;
-        height: 100vh;
+        margin: 0 auto;
+        width: 90vw;
+        height: 80vh;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
       }
@@ -27,7 +28,9 @@
   </head>
   <body>
     <div id="loading"></div>
-    <h1 id="status">Loading</h1>
+    <h1 id="status">Downloading</h1>
+    <p id="nCounter"></p>
+    <input type="range" min="1" max="100000" value="1" class="slider" id="myRange">
     <div id="grid">
       <div id="gd1"></div>
       <div id="gd2"></div>
@@ -35,41 +38,63 @@
     </div>
 
     <script>
-    const maxN = 1E7;
-    function draw(N) {
-      // Coerce input
-      if(!N) N = maxN;
-      if(N > maxN) N = maxN;
+    const maxN = 1E6;
+    var initialN = 1E5;
+    var statusElement = document.getElementById('status')
+    var nElement = document.getElementById('nCounter')
 
-      // Load file
-      var out = {
-        t: [],
-        x: [],
-        u: [],
-        t: [],
-        lp_drive_gain: [],
-        lp_x2: [],
-        n: [],
-        phase: []
-      }
+    var i = document.getElementById('myRange')
+    i.setAttribute('max', maxN)
+    i.setAttribute('value', initialN)
 
-      axios.get('out.bin',{responseType: 'arraybuffer'})
+    i.addEventListener('change', function() {
+      main(i.value);
+    })
+
+    var dataPromise = axios.get('out.bin',{responseType: 'arraybuffer'});
+
+    function main(n) {
+      if(!n) n = maxN;
+      if(n>maxN) n = maxN;
+
+      dataPromise
       .then(function(value) {
+        nElement.innerHTML = `Displaying ${n} values`
+        return value
+      })
+      // parse binary file into object
+      .then(function(value) {
+        // Load file
+        var out = {
+          t: [],
+          x: [],
+          u: [],
+          t: [],
+          lp_drive_gain: [],
+          lp_x2: [],
+          n: [],
+          phase: [],
+          length: 0
+        }
+
         var matrix = new Float64Array(value.data);
-        for(var i = 0; i < Math.min(N, matrix.length); i++) {
+        for(var i = 0; i < Math.min(n, maxN, matrix.length); i++) {
           if(i % 9 === 0) out.t.push(matrix[i])
           if(i % 9 === 1) out.x.push(matrix[i])
           if(i % 9 === 2) {
             out.u.push(matrix[i] / 600E3);
-
             out.phase.push(Math.atan(out.x.slice(-1), out.u.slice(-1)))
           }
           if(i % 9 === 5) out.lp_x2.push(Math.sqrt(matrix[i])*Math.sqrt(2));
           if(i % 9 === 6) out.lp_drive_gain.push(matrix[i])
           if(i % 9 === 7) out.n.push(matrix[i])
         }
-        console.log(matrix.length)
+        out.length = i;
 
+        return Promise.resolve(out);
+      })
+      // plotly make figure
+      .then(function(out) {
         var config = {
           responsive: false
         };
@@ -83,26 +108,20 @@
           Plotly.newPlot('gd1',[{type: 'scattergl', x: out.x, y: out.u}], { xaxis: { constrain: 'domain'}, margin: margin}, config)
         ]
 
-        Promise.all(p)
-        .then(function() {
-          document.getElementById('status').innerText = 'Done';
+        return Promise.all(p)
+      })
+      // update status
+      .then(function() {
+        statusElement.remove()
 
-        })
-        .catch(function() {
-          document.getElementById('status').innerText = 'Failed'
-        })
+      })
+      .catch(function(err) {
+        statusElement.innerText = 'Failed'
+        console.log(err)
       })
     }
 
-    // var n = 1E4;
-    // function step() {
-    //     console.log('Step')
-    //     draw(n);
-    //     n += 1E4;
-    //     if(n < maxN) step();
-    // }
-    // window.setTimeout(step, 2000)
-    draw(1E6);
+    main(initialN);
     </script>
   </body>
 </html>
