@@ -21,7 +21,7 @@
       }
 
       #loading {
-        
+
       }
     </style>
   </head>
@@ -38,7 +38,7 @@
     function draw() {
       var x = []; var u = []; var t = []; var lp_drive_gain = []; var lp_x2 =[]; var n= [];
       var phase = [];
-      axios.get('/out.bin',{responseType: 'arraybuffer'})
+      axios.get('out.bin',{responseType: 'arraybuffer'})
       .then(function(value) {
         var matrix = new Float64Array(value.data);
         for(var i = 0; i < matrix.length; i++) {
