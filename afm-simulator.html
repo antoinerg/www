@@ -35,31 +35,52 @@
     </div>
 
     <script>
-    function draw() {
-      var x = []; var u = []; var t = []; var lp_drive_gain = []; var lp_x2 =[]; var n= [];
-      var phase = [];
+    const maxN = 1E7;
+    function draw(N) {
+      // Coerce input
+      if(!N) N = maxN;
+      if(N > maxN) N = maxN;
+
+      // Load file
+      var out = {
+        t: [],
+        x: [],
+        u: [],
+        t: [],
+        lp_drive_gain: [],
+        lp_x2: [],
+        n: [],
+        phase: []
+      }
+
       axios.get('out.bin',{responseType: 'arraybuffer'})
       .then(function(value) {
         var matrix = new Float64Array(value.data);
-        for(var i = 0; i < matrix.length; i++) {
-          if(i % 9 === 0) t.push(matrix[i])
-          if(i % 9 === 1) x.push(matrix[i])
+        for(var i = 0; i < Math.min(N, matrix.length); i++) {
+          if(i % 9 === 0) out.t.push(matrix[i])
+          if(i % 9 === 1) out.x.push(matrix[i])
           if(i % 9 === 2) {
-            u.push(matrix[i] / 600E3);
+            out.u.push(matrix[i] / 600E3);
 
-            phase.push(Math.atan(x.slice(-1), u.slice(-1)))
+            out.phase.push(Math.atan(out.x.slice(-1), out.u.slice(-1)))
           }
-          if(i % 9 === 5) lp_x2.push(Math.sqrt(matrix[i])*Math.sqrt(2));
-          if(i % 9 === 6) lp_drive_gain.push(matrix[i])
-          if(i % 9 === 7) n.push(matrix[i])
+          if(i % 9 === 5) out.lp_x2.push(Math.sqrt(matrix[i])*Math.sqrt(2));
+          if(i % 9 === 6) out.lp_drive_gain.push(matrix[i])
+          if(i % 9 === 7) out.n.push(matrix[i])
         }
         console.log(matrix.length)
 
+        var config = {
+          responsive: false
+        };
+        var margin = {
+          l:25, r: 25, b:25, t:25
+        };
 
         var p = [
-          Plotly.newPlot('gd3',[{name: 'lp_drive_gain', type: 'scattergl', x: t, y: lp_drive_gain}]),
-          Plotly.newPlot('gd2',[{name: 'x', type: 'scattergl', x: t, y: x}, {name: 'lp_x2', type: 'scattergl', x: t, y: lp_x2}]),
-          Plotly.newPlot('gd1',[{type: 'scattergl', x: x, y: u}], { xaxis: { constrain: 'domain'}})
+          Plotly.newPlot('gd3',[{name: 'lp_drive_gain', type: 'scattergl', x: out.t, y: out.lp_drive_gain}], {margin:margin}, config),
+          Plotly.newPlot('gd2',[{name: 'x', type: 'scattergl', x: out.t, y: out.x}, {name: 'lp_x2', type: 'scattergl', x: out.t, y: out.lp_x2}], {margin:margin}, config),
+          Plotly.newPlot('gd1',[{type: 'scattergl', x: out.x, y: out.u}], { xaxis: { constrain: 'domain'}, margin: margin}, config)
         ]
 
         Promise.all(p)
@@ -73,8 +94,15 @@
       })
     }
 
-    draw()
-
+    // var n = 1E4;
+    // function step() {
+    //     console.log('Step')
+    //     draw(n);
+    //     n += 1E4;
+    //     if(n < maxN) step();
+    // }
+    // window.setTimeout(step, 2000)
+    draw(1E6);
     </script>
   </body>
 </html>
