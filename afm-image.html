@@ -1,95 +1,162 @@
 <!DOCTYPE html>
 <html lang='en'>
-  <head>
-    <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <style>
-      html, body {
-        margin:0; padding:0;
-      }
-      #grid {
-        display: grid;
-        width: 90vw;
-        height: 80vh;
-        margin-left:5vw;
-        grid-template-columns: 1fr 1fr;
-      }
 
-      #grid > div {
-        display:inline-block;
-      }
+<head>
+  <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-      #loading {
+    #grid {
+      display: grid;
+      width: 90vw;
+      height: 80vh;
+      margin-left: 5vw;
+      grid-template-rows: 1fr 1fr;
+    }
 
-      }
-    </style>
-  </head>
-  <body>
-    <h1 id="title">afm file</h1>
-    <button onclick="restyle()">Restyle</button>
-    <div id="grid">
-      <div id="gd1"></div>
-      <div id="gd2"></div>
-    </div>
+    #grid>div {
+      display: inline-block;
+    }
 
-    <script>
+    #loading {}
+  </style>
+</head>
+
+<body>
+  <h1 id="counter"></h1>
+  <h2 id="title">afm file</h2>
+  <button onclick="previous()">Previous</button>
+  <button onclick="next()">Next</button>
+  <button onclick="restyle()">Restyle</button>
+  <div id="grid">
+    <div id="gd1"></div>
+    <div id="gd2"></div>
+  </div>
+
+  <script>
     window.toggle = true
+    window.i = 1
+    window.traceType = 'heatmap'
+    var filename = ''
+
+    function next() {
+      window.i += 1
+      compute(window.i)
+      document.getElementById('counter').innerText = filename;
+    }
+
+    function previous() {
+      window.i -= 1
+      window.i = Math.max(1, window.i)
+      compute(window.i)
+      document.getElementById('counter').innerText = filename;
+    }
+
     function restyle() {
       window.toggle = !window.toggle
-      var newTraceType;
-      if(window.toggle) newTraceType='heatmap'
-      if(!window.toggle) newTraceType='surface'
-      Plotly.restyle('gd1','type', newTraceType)
-      Plotly.restyle('gd2','type', newTraceType)
+      if (window.toggle) window.traceType = 'heatmap'
+      if (!window.toggle) window.traceType = 'surface'
+      Plotly.restyle('gd1', 'type', window.traceType)
+      Plotly.restyle('gd2', 'type', window.traceType)
     }
+
+    function pad(n, width, z) {
+      z = z || '0';
+      n = n + '';
+      return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
+    function compute(i) {
+      filename = `2015-03-inas_capped/raw/26-03-2015.inas_capped.${pad(i, 3)}.sxm`
+      var request = {
+        url: '/home/antoine/programming/gwy_thumbnails',
+        rev: '7c1a2185b304511417744fb936f596791d4610a6',
+        path: 'release.nix',
+        arguments: {
+          filename: filename
+        }
+      }
+
+      axios.post('http://localhost:9999/', request)
+        .then(function(res) {
+          console.log(res)
+          var url = res.data[0].url
+          console.log('url', url)
+          var p1 = getImageInfo(url + 'image.json')
+          var p2 = plotChannel('gd1', url + 'channel/18/channel.json')
+          var p3 = plotChannel('gd2', url + 'channel/20/channel.json')
+          return Promise.all([p1, p2, p3])
+        })
+        .catch(function(err) {
+          alert(err)
+        })
+    }
+
     function getImageInfo(imageUrl) {
-      axios.get(imageUrl)
-      .then(function(response) {
-        var image = response.data
-        document.getElementById('title').innerText = `Bias ${image.Bias}, T=${image.Temperature}`;
-        console.log(image)
-      })
+      return axios.get(imageUrl)
+        .then(function(response) {
+          var image = response.data
+          document.getElementById('title').innerText = `Bias ${image.Bias}, T=${image.Temperature}`;
+          console.log(image)
+        })
     }
+
     function plotChannel(gd, channelUrl) {
-      var margin = {l:0, r:0, t:30, b:0}
+      var margin = {
+        l: 0,
+        r: 0,
+        t: 30,
+        b: 0
+      }
       axios.get(channelUrl)
-      .then(function(response) {
-        var channel = response.data
-        var arr = channel.data
-        var newArr = [];
-        while(arr.length) newArr.push(arr.splice(0,256));
+        .then(function(response) {
+          var channel = response.data
+          var arr = channel.data
+          var newArr = [];
+          while (arr.length) newArr.push(arr.splice(0, 256));
 
-        var p = [
-          Plotly.newPlot(gd,[{type: 'surface', z: newArr, colorscale: 'Greys'}], {
-            title: channel.title,
-            margin: margin,
-            xaxis: {
-              showgrid: false,
-              zeroline: false,
-              showline: false
-            },
-            yaxis: {
-              scaleanchor: "x",
-              showgrid: false,
-              zeroline: false,
-              showline: false
-            }
-          }, {responsive: true})
-        ]
+          var p = [
+            Plotly.newPlot(gd, [{
+              type: window.traceType,
+              z: newArr,
+              colorscale: 'Greys'
+            }], {
+              title: channel.title,
+              margin: margin,
+              xaxis: {
+                showgrid: false,
+                zeroline: false,
+                showline: false
+              },
+              yaxis: {
+                scaleanchor: "x",
+                showgrid: false,
+                zeroline: false,
+                showline: false
+              }
+            }, {
+              responsive: true
+            })
+          ]
 
-        Promise.all(p)
-        .then(function() {
-          // document.getElementById('status').innerText = 'Done';
+          Promise.all(p)
+            .then(function() {
+              // document.getElementById('status').innerText = 'Done';
+            })
+            .catch(function(err) {
+              // document.getElementById('status').innerText = 'Failed'
+              console.log(err)
+            })
         })
-        .catch(function() {
-          // document.getElementById('status').innerText = 'Failed'
-        })
-      })
     }
-    getImageInfo('image.json')
-    plotChannel('gd1', 'channel/18/channel.json')
-    plotChannel('gd2', 'channel/20/channel.json')
-    </script>
-  </body>
+    compute(window.i)
+  </script>
+</body>
+
 </html>

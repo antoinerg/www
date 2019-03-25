@@ -1,0 +1,38 @@
+<html>
+
+<head>
+  <!-- Plotly.js -->
+  <script src="http://localhost:3000/build/plotly.js"></script>
+  <script>
+    var clickCount = 0;
+    var hoverCount = 0;
+    var unhoverCount = 0;
+    Plotly.d3.json('https://raw.githubusercontent.com/plotly/plotly.js/master/test/image/mocks/sankey_energy.json', function(figure) {
+
+      Plotly.plot('gd1', figure)
+        .then(function(gd) {
+          gd.on('plotly_click', function(evt) {
+            document.getElementById('clickCount').innerText = clickCount++;
+          })
+          gd.on('plotly_hover', function(evt) {
+            document.getElementById('hoverCount').innerText = hoverCount++;
+          })
+
+          gd.on('plotly_unhover', function(evt) {
+            document.getElementById('unhoverCount').innerText = unhoverCount++;
+          })
+        })
+    })
+  </script>
+</head>
+
+<body>
+  <h1>Click count: <span id="clickCount">0</span></h1>
+  <h1>Hover count: <span id="hoverCount">0</span></h1>
+  <h1>Unhover count: <span id="unhoverCount">0</span></h1>
+  <div id="gd1">
+    <!-- Plotly chart will be drawn inside this DIV -->
+  </div>
+</body>
+
+</html>

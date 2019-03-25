@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+
+    <script src="http://localhost:3000/build/plotly.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <style>
+  html, body {
+    margin:0; padding:0;
+  }
+  #graph {
+    border: 1px solid black;
+    height: 100vh;
+  }
+  </style>
+  <body>
+    <script>
+      axios.get('basf_trace.json')
+      .then(function(resp,err) {
+        console.log(resp.data)
+        var trace = resp.data
+        var link = trace.link
+
+        // var i = 0;
+        // var j = 3000;
+        // link.source = link.source.slice(i, j)
+        // link.target = link.target.slice(i, j)
+        // link.value = link.value.slice(i, j)
+
+        // links.source.splice(0, 126);
+        // links.target.splice(0, 126);
+        // links.value.splice(0, 126);
+
+        // links.source.splice(100, 30);
+        // links.target.splice(100, 30);
+        // links.value.splice(100, 30);
+
+        console.log(link.source.length)
+
+        Plotly.plot('graph', [trace], {
+          autosize:true
+        }, {responsive: true})
+      })
+    </script>
+    <div id="graph"></div>
+  </body>
+</html>

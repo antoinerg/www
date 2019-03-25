@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/d3-array@1"></script>
+    <script src="https://unpkg.com/d3-collection@1"></script>
+    <script src="https://unpkg.com/d3-path@1"></script>
+    <script src="https://unpkg.com/d3-shape@1"></script>
+    <script src="https://unpkg.com/d3-sankey@0"></script>
+    <style>
+      html, body {
+        margin:0; padding:0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script>
+      axios.get('https://raw.githubusercontent.com/d3/d3-sankey/master/test/energy.json')
+      .then(function(resp,err) {
+        var graph = resp.data;
+        var sankey = d3.sankey().nodes(graph.nodes).links(graph.links);
+        window.sankey = sankey;
+      })
+
+    </script>
+    <div id="graph"></div>
+    <div id="console"></div>
+  </body>
+</html>

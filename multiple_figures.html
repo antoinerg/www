@@ -13,9 +13,7 @@
         grid-template-rows: 1fr 1fr 1fr 1fr;
       }
 
-      #grid > div {
-        display:inline-block;
-      }
+
     </style>
   </head>
   <body>
@@ -29,7 +27,7 @@
       data[0].y.push(Math.sin(2*Math.PI*10/N * i)*i**2);
     };
 
-    var K = 100;
+    var K = 20;
     window.gds = [];
     var grid = document.getElementById('grid');
     for (var i = 1; i <= K; i++) {

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <script src='http://localhost:3000/build/plotly.js'></script>
+    <!-- <script src='http://localhost:3001/build/plotly.js'></script> -->
+    <script src="https://25287-45646037-gh.circle-artifacts.com/0/plotly.min.js"></script>
     <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
     <style>
       html, body {
@@ -19,10 +20,6 @@
         border: 1px solid black;
         flex-grow: 1;
       }
-
-      #graph2 {
-        position:relative;
-      }
     </style>
   </head>
   <body>
@@ -33,18 +30,23 @@
 
     <script>
     var graph1 = {
-      data: [{x:[1,2,3,4,5,6], y:[6,3,8,4,0,6]}],
-      layout: {margin:{t:50,b:50,l:50,r:50}, modebar: {orientation: 'v'}},
-      config: {responsive: false, displayModeBar: true}
+      data: [{type:'scattergl', x:[1,2,3,4,5,6], y:[6,3,8,4,0,6], hovertemplate: 'lbcd<extra></extra>'}],
+      layout: {
+        margin: {t:0,b:0,l:0,r:0},
+        modebar: {
+          orientation: 'v',
+          bgcolor: 'rgba(0,0,0,1)'
+        }
+      },
+      config: {responsive: true, displayModeBar: 'on'}
     }
-    // Plotly.plot('graph1', graph1)
-
+    Plotly.plot('graph1', graph1)
     window.gd1 = document.getElementById('graph1')
 
     var graph2 = JSON.parse(JSON.stringify(graph1));
-    graph2.config.responsive = true;
+    graph2.layout.modebar.orientation = 'h'
+    // graph2.config.responsive = true;
     Plotly.plot('graph2', graph2)
-
     window.gd2 = document.getElementById('graph2')
     </script>
   </body>
