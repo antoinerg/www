@@ -1,0 +1,41 @@
+<head>
+    <script src="http://localhost:3000/build/plotly.js"></script>
+
+    <script>
+      Plotly.d3.json('https://raw.githubusercontent.com/plotly/plotly.js/master/test/image/mocks/heatmap-with-zero-category.json', figure => {
+        figure.data[0].y = ["d", "c", "b", "a"]
+        console.log(figure);
+        Plotly.newPlot('gd', figure)
+        .then(reverseYAxis);
+      })
+
+      var yreverse = false;
+      function reverseYAxis() {
+        yreverse = !yreverse;
+        Plotly.relayout('gd', {
+          'yaxis.categoryorder': yreverse ? 'category descending' : 'category ascending'
+        })
+      }
+
+      var xreverse = true;
+      function reverseXAxis() {
+        xreverse = !xreverse;
+        Plotly.relayout('gd', {
+          'xaxis.categoryorder': xreverse ? 'category descending' : 'category ascending'
+        })
+      }
+
+      var transpose = false;
+      function toggleTranspose() {
+        transpose = !transpose;
+        Plotly.restyle('gd', {
+          'transpose': transpose
+        })
+      }
+    </script>
+</head>
+
+<button onclick="reverseYAxis()">reverse yaxis category order</button>
+<button onclick="reverseXAxis()">reverse xaxis category order</button>
+<button onclick="toggleTranspose()">transpose</button>
+<div id="gd"></div>

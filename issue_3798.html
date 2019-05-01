@@ -1,0 +1,79 @@
+<head>
+  <!-- Plotly.js -->
+   <script src="http://localhost:3000/build/plotly.js"></script>
+</head>
+
+<body>
+  <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+  <script>
+    var scatter = {
+      "type": "scatter",
+      "xaxis": "x2"
+    }
+
+    var sankey = {
+      "domain": {
+        "x": [
+          0,
+          0.45
+        ]
+      },
+      "link": {
+        "source": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "target": [
+          2,
+          3,
+          2,
+          3
+        ],
+        "value": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "node": {
+        "label": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      },
+      "type": "sankey"
+    }
+
+    var fig = {
+      // Works
+      // "data": [sankey, scatter],
+
+      // Breaks
+      "data": [scatter, sankey],
+
+      "layout": {
+        "annotations": [
+          {
+            "text": "(1,1)",
+            "x": 1,
+            "xref": "x2",
+            "y": 1
+          }
+        ],
+        "xaxis2": {
+          "domain": [
+            0.55,
+            1
+          ]
+        }
+      }
+    }
+
+    Plotly.newPlot('myDiv', fig, {showSendToCloud: true});
+  </script>
+</body>

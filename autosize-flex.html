@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <!-- <script src='http://localhost:3001/build/plotly.js'></script> -->
-    <script src="https://25287-45646037-gh.circle-artifacts.com/0/plotly.min.js"></script>
+    <script src='http://localhost:3000/build/plotly.js'></script>
+    <!-- <script src="https://25287-45646037-gh.circle-artifacts.com/0/plotly.min.js"></script> -->
     <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
     <style>
       html, body {
@@ -38,7 +38,7 @@
           bgcolor: 'rgba(0,0,0,1)'
         }
       },
-      config: {responsive: true, displayModeBar: 'on'}
+      config: {responsive: true, displayModeBar: 'on', toImageButtonOptions: {width: null, height: null}}
     }
     Plotly.plot('graph1', graph1)
     window.gd1 = document.getElementById('graph1')
