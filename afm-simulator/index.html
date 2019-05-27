@@ -38,8 +38,8 @@
     </div>
 
     <script>
-    const maxN = 1E6;
-    var initialN = 1E5;
+    const maxN = 5E6;
+    var initialN = 5E6;
     var statusElement = document.getElementById('status')
     var nElement = document.getElementById('nCounter')
 
@@ -69,10 +69,12 @@
           t: [],
           x: [],
           u: [],
-          t: [],
-          lp_drive_gain: [],
+          drive_gain: [],
+          ampl_err: [],
           lp_x2: [],
+          lp_drive_gain: [],
           n: [],
+          E: [],
           phase: [],
           length: 0
         }
@@ -96,16 +98,17 @@
       // plotly make figure
       .then(function(out) {
         var config = {
-          responsive: false
+          responsive: true
         };
         var margin = {
-          l:25, r: 25, b:25, t:25
+          l:60, r: 25, b:50, t:25
         };
 
+        var traceType = 'scattergl';
         var p = [
-          Plotly.newPlot('gd3',[{name: 'lp_drive_gain', type: 'scattergl', x: out.t, y: out.lp_drive_gain}], {margin:margin}, config),
-          Plotly.newPlot('gd2',[{name: 'x', type: 'scattergl', x: out.t, y: out.x}, {name: 'lp_x2', type: 'scattergl', x: out.t, y: out.lp_x2}], {margin:margin}, config),
-          Plotly.newPlot('gd1',[{type: 'scattergl', x: out.x, y: out.u}], { xaxis: { constrain: 'domain'}, margin: margin}, config)
+          Plotly.newPlot('gd3',[{name: 'lp_drive_gain', type: traceType, x: out.t, y: out.lp_drive_gain}], {margin:margin, yaxis:{title:'Low-pass filtered drive-gain'}, xaxis:{title:'Time (s)'}}, config),
+          Plotly.newPlot('gd1',[{name: 'x', type: traceType, x: out.t, y: out.x}, {name: 'lp_x2', type: 'scattergl', x: out.t, y: out.lp_x2}], {margin:margin, legend: {x: .8, y: 1.1, bgcolor: 'rgba(0,0,0,0)'}}, config),
+          Plotly.newPlot('gd2',[{type: 'histogram2d', histnorm: 'probability', colorscale: [['0', 'rgb(255,255,255)'],['1', 'rgb(0,0,0)']], x: out.x, y: out.u, nbinsy:128, nbinsx:128}], { xaxis: { constrain: 'domain', title:'Position (x)'}, yaxis: {title: 'Velocity (u)'}, margin: margin}, config)
         ]
 
         return Promise.all(p)
