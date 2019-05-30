@@ -2,7 +2,8 @@
 <html lang='en'>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
-    <script src='https://39577-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script>
+    <script src='https://39909-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script>
+    <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
     <style>
       html, body {
         margin:0; padding:0; background: black;
@@ -43,7 +44,7 @@
   </head>
   <body>
 
-    <div class="header"><h1>plotly.js indicator</h1><h3>Resize window</h3></div>
+    <div class="header"><h1>plotly.js indicator</h1><h3>Resize window vertically</h3></div>
     <div class="container">
       <div class="figure">
         <h2>mode: `bignumber`</h2>
@@ -57,6 +58,19 @@
         <h2>mode: `sparkline`</h2>
         <div id="gd2"></div>
       </div>
+      <div class="figure">
+        <h2>mode: `bullet`</h2>
+        <div id="gd6"></div>
+      </div>
+      <div class="figure">
+        <h2>mode: `bignumber` + scatter</h2>
+        <div id="gd4"></div>
+      </div>
+
+      <div class="figure">
+        <h2>mode: `bignumber` + bar</h2>
+        <div id="gd5"></div>
+      </div>
     </div>
     <script>
     var values = [400, 450];
@@ -68,14 +82,18 @@
         ticker: {
           showticker: false
         },
+        max: 500,
+        target: 400,
         gauge: {
-          max: 500,
           background: {
             color: 'rgba(255, 255, 255, 0.25)',
             line: {
               width: 2,
               color: 'rgba(255, 255, 255, 0.5)'
             }
+          },
+          target: {
+            color: 'rgba(255, 255, 0, 0.5)'
           }
         },
         values: values,
@@ -124,9 +142,7 @@
           showticker: true,
           showpercentage: false
         },
-        gauge: {
-          max: 500
-        },
+        max: 500,
         values: values2,
         font: {
           color: 'white',
@@ -173,9 +189,7 @@
           showticker: true,
           showpercentage: true
         },
-        gauge: {
-          max: 500
-        },
+        max: 500,
         values: values3,
         font: {
           color: 'white',
@@ -208,6 +222,197 @@
           }
         }).then(function() {
           update3();
+        })
+      }, 500)
+    }
+
+    var values4 = [325, 324, 405, 400];
+    var figure4 = {
+      data: [{
+        domain: {
+          y: [0.25, 0.75],
+          x: [0.25, 0.75]
+        },
+        name: 'Users online',
+        type: 'indicator',
+        mode: 'bignumber',
+        ticker: {
+          showticker: true,
+          showpercentage: true
+        },
+        max: 500,
+        values: values4,
+        font: {
+          color: 'white',
+          family: 'Dosis'
+        },
+      }, {
+        y: values4,
+        marker: {color: 'rgba(255, 255, 255, 0.5)'}
+      }],
+      layout: {
+        xaxis: {
+          autorange: true
+        },
+        font: {
+          color: 'white'
+        },
+        paper_bgcolor: 'black',
+        plot_bgcolor: 'black',
+        margin: {t:25, r:25, l:25, b:25}
+      },
+      config: {
+        responsive: true
+      }
+    };
+    console.log(JSON.stringify(figure4));
+    Plotly.newPlot('gd4', figure4)
+    .then(function() {
+        update4();
+    });
+
+    function update4() {
+      setTimeout(function() {
+        values4.push(values4[values4.length -1 ] + Math.floor((Math.random() - 0.5) * 50));
+        Plotly.animate('gd4', {
+          // data: values4,
+          layout: {
+            xaxis: {range: [0, values4.length - 1]}
+          }
+        }, {
+          transition: {
+            duration: 500,
+            easing: 'cubic-in-out'
+          }
+        }).then(function() {
+          update4();
+        })
+      }, 500)
+    }
+
+    var values5 = [325, 324, 405, 400];
+    var figure5 = {
+      data: [{
+        domain: {
+          y: [0.25, 0.75],
+          x: [0.25, 0.75]
+        },
+        name: 'Users online',
+        type: 'indicator',
+        mode: 'bignumber',
+        ticker: {
+          showticker: true,
+          showpercentage: true
+        },
+        max: 500,
+        values: values5,
+        font: {
+          color: 'white',
+          family: 'Dosis'
+        },
+      },
+      {orientation: 'h', type:'bar', y: [0], x: [500], marker: {color: 'rgba(255,255,255,0.25)'}},
+      {orientation: 'h', type:'bar', y: [0], x: [250], marker: {color: 'rgba(255,255,0,0.5)'}},
+      {orientation: 'h', type:'bar', y: [0], x: [values5[values5.length - 1]], width:0.5, marker: {color: 'green'}}
+      ],
+      layout: {
+        barmode: 'overlay',
+        xaxis: {
+          range: [0, 500]
+        },
+        yaxis: {
+          visible: false,
+          // range: [-2, 2],
+          domain: [0, .15]
+        },
+        font: {
+          color: 'white'
+        },
+        paper_bgcolor: 'black',
+        plot_bgcolor: 'black',
+        margin: {t:25, r:25, l:25, b:25}
+      },
+      config: {
+        responsive: true
+      }
+    };
+    console.log(JSON.stringify(figure5));
+    Plotly.newPlot('gd5', figure5)
+    .then(function() {
+        update5();
+    });
+
+    function update5() {
+      setTimeout(function() {
+        values5.push(values5[values5.length -1 ] + Math.floor((Math.random() - 0.5) * 50));
+        Plotly.animate('gd5', {
+          data: values5
+        }, {
+          transition: {
+            duration: 500,
+            easing: 'cubic-in-out'
+          }
+        }).then(function() {
+          update5();
+        })
+      }, 500)
+    }
+
+    var values6 = [400, 450];
+    var figure6 = {
+      data: [{
+        name: 'Speed',
+        type: 'indicator',
+        mode: 'bullet',
+        ticker: {
+          showticker: false
+        },
+        max: 1000,
+        target: 700,
+        gauge: {
+          background: {
+            color: 'rgba(255, 255, 255, 0.25)',
+            line: {
+              width: 2,
+              color: 'rgba(255, 255, 255, 0.5)'
+            }
+          },
+          target: {
+            color: 'rgba(255, 255, 0, 0.5)'
+          }
+        },
+        values: values6,
+        font: {
+          color: 'white',
+          family: 'Dosis'
+        },
+      }],
+      layout: {
+        paper_bgcolor: 'black',
+        margin: {t:25, r:25, l:25, b:25}
+      },
+      config: {
+        responsive: true
+      }
+    };
+    console.log(JSON.stringify(figure6));
+    Plotly.newPlot('gd6', figure6)
+    .then(function() {
+      update6();
+    })
+
+    function update6() {
+      setTimeout(function() {
+        values6.push(Math.random() * 750);
+        Plotly.animate('gd6', {
+          data: values6
+        }, {
+          transition: {
+            duration: 500,
+            easing: 'cubic-in-out'
+          }
+        }).then(function() {
+          update6();
         })
       }, 500)
     }
