@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
+    <!-- <script src='https://39909-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script> -->
+    <script src='http://localhost:3000/build/plotly.js'></script>
+    <style>
+      html, body {
+        margin:0; padding:0; background: black;
+        font-family: 'Dosis'; color: white;
+      }
+
+      .figure > div {
+        /* border: 1px solid rgba(255, 255, 255, 0.25); */
+        height: 35vh;
+      }
+
+      .container {
+        text-align: center;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        display: grid;
+        width: 95vw;
+      }
+
+      .header {
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin-top:50px;
+      }
+
+      h2 {
+        background-color: rgba(255, 255, 255, 0.5);
+        width: 90%;
+        margin: 0 auto;
+      }
+
+      h1 {margin: 0 auto;}
+    </style>
+  </head>
+  <body>
+
+    <div class="header"><h1>plotly.js indicator</h1><h3>Resize window vertically</h3></div>
+    <div class="container">
+
+    </div>
+    <script>
+var container = document.getElementsByClassName('container')[0];
+var interval = 1000;
+
+function figure(str, i) {
+  var figure = document.createElement('div');
+  figure.classList.add('figure');
+
+  var title = document.createElement('h2');
+  title.innerText = str;
+  figure.appendChild(title);
+
+  var gd = document.createElement('div');
+  figure.appendChild(gd);
+
+  container.appendChild(figure);
+
+  var values = [400, 450];
+  var update = function() {
+    setTimeout(function() {
+      values.push(values[values.length - 1] + Math.floor((Math.random() - 0.5) * 200));
+      Plotly.animate(gd, {
+          data: [{values: values}]
+        }, {
+          transition: {
+            duration: 500,
+            easing: 'cubic-in-out'
+          }
+      })
+      .then(() => update())
+    }, interval);
+  }
+
+  Plotly.newPlot(gd, {
+    data: [{
+      name: 'Value',
+      type: 'indicator',
+      mode: str,
+      values: values,
+      max: 800,
+      target: 600,
+      gauge: {
+        shape: (i === 6 || i === 7) ? 'bullet' : 'circular',
+        background: {
+            color: 'rgba(255, 255, 255, 0.25)',
+            line: {
+              width: 2,
+              color: 'rgba(255, 255, 255, 0.5)'
+            }
+        },
+        target: {
+            color: 'rgba(255, 255, 0, 0.5)'
+        }
+      },
+      delta: {
+        showpercentage: true
+      }
+    }],
+    layout: {
+        font: {
+            color: 'white',
+            family: 'Dosis'
+          },
+        paper_bgcolor: 'black',
+        margin: {t:25, r:25, l:25, b:25}
+    },
+    config: {
+        responsive: true
+    }
+  }).then(function(gd) {
+      update();
+  })
+}
+
+['bignumber', 'bignumber+delta', 'delta', 'gauge+delta', 'bignumber+gauge', 'bignumber+gauge+delta', 'bignumber+gauge', 'bignumber+gauge+delta'].forEach(function(mode, i) {
+    figure(mode, i);
+})
+
+    </script>
+  </body>
+</html>
