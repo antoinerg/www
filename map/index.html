@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    src = [
+      'gz_2010_us_040_00_500k.json',
+      'us_congressional_districts.json',
+      'https://code.highcharts.com/mapdata/countries/us/custom/us-all-territories.geo.json'
+    ]
+    Plotly.d3.json(src[1], function(data) {
+      Plotly.newPlot("gd", [{
+        type: 'scattermapbox'
+      }], {
+        height: 800,
+        width: 800,
+        mapbox: {
+          layers: [
+          {
+            sourcetype: 'geojson',
+            source: data,
+            type: 'fill',
+            color: 'black',
+            opacity: 0.8
+          }
+        ]
+        }
+      }, {
+          mapboxAccessToken: 'pk.eyJ1IjoiY2hyaWRkeXAiLCJhIjoiRy1GV1FoNCJ9.yUPu7qwD_Eqf_gKNzDrrCQ'
+        })
+
+    })
+  </script>
+</head>
+<body>
+<div id="gd"></div>
+</body>
+</html>

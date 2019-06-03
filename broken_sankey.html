@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+
+    <script src="http://localhost:3000/build/plotly.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <style>
+  html, body {
+    margin:0; padding:0;
+  }
+  #graph {
+    border: 1px solid black;
+    height: 100vh;
+  }
+  </style>
+  <body>
+    <script>
+      axios.get('sankey/broken1.json')
+      .then(function(resp,err) {
+        console.log(resp.data)
+        var fig = resp.data
+
+        fig.layout.responsive = true;
+
+        Plotly.plot('graph', fig)
+      })
+    </script>
+    <div id="graph"></div>
+  </body>
+</html>
