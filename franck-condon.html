@@ -1,0 +1,189 @@
+<head>
+    <script src="http://localhost:3000/build/plotly.js"></script>
+    <script src="http://localhost:3000/dist/extras/mathjax/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.2/sprintf.min.js"></script>
+    <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+
+    <script>
+      var i = 512;
+      function plot() {
+        Plotly.d3.json(`http://localhost:2015/franck-condon/figures/video_M/figure_${sprintf('%04d', i)}.json`, (error, figure) => {
+              // figure.data[0].hovertemplate = '%{x} %{y} %{z:0.2f} $|M|^2$<extra></extra>'
+              // figure.data[0].colorbar = {
+              //   tickformat: '.2f'
+              // }
+              if(error) return;
+
+              Plotly.react('gd', figure)
+              .then(function(gd) {
+                  i += 1;
+                  gd.on('plotly_hover', evt => {
+                    var id = evt.points[0]
+                    var gd2 = document.getElementById('gd2');
+                    Plotly.restyle(gd2,'fillcolor','rgba(0,0,255,0.2)', id.y)
+
+                    Plotly.relayout(gd, 'shapes', [{
+                      type: 'rect',
+                      xref: 'x',
+                      yref: 'y',
+                      x0: id.x-0.5,
+                      y0: id.y - 0.5,
+                      x1: id.x + 0.5,
+                      y1: id.y+0.5,
+                      line: {
+                        color: 'rgb(255, 255, 255)',
+                        width: 3
+                      },
+                      fillcolor: 'rgba(255, 255, 255, 0)'
+                    }]);
+                  })
+                  gd.on('plotly_unhover', evt => {
+                    var id = evt.points[0]
+                    var gd2 = document.getElementById('gd2');
+                    Plotly.restyle(gd2,'fillcolor','rgba(0,0,255,1)', id.y)
+                    Plotly.relayout('gd', 'shapes', [])
+                  })
+                  // plot();
+              })
+        })
+      }
+
+      var n = 0;
+      function plot2() {
+        Plotly.d3.json(`http://localhost:2015/franck-condon/figures/figure_theory/frames/${n}.json`, (error, figure) => {
+            if(error) {
+              gd2.on('plotly_hover', evt => {
+                var gd2 = document.getElementById('gd2')
+                var id = evt.points[0].curveNumber;
+                console.log(id);
+                Plotly.restyle(gd2,'fillcolor','rgba(0,0,255,0.2)', id)
+
+                // Plotly.relayout('gd', 'annotations', [{
+                //   x: id,
+                //   y: id,
+                //   xref: 'x',
+                //   yref: 'y',
+                //   arrowcolor: 'white',
+                //   text: 'Annotation Text',
+                //   font: { color: 'white'},
+                //   showarrow: true,
+                //   arrowhead: 2,
+                //   ax: 300,
+                //   ay: 0
+                // }])
+
+                Plotly.relayout('gd', 'shapes', [{
+                  type: 'rect',
+                  xref: 'x',
+                  yref: 'y',
+                  x0: -0.5,
+                  y0: id - 0.5,
+                  x1: 31.5,
+                  y1: id+0.5,
+                  line: {
+                    color: 'rgb(255, 255, 255)',
+                    width: 3
+                  },
+                  fillcolor: 'rgba(255, 255, 255, 0)'
+                }]);
+                // console.log(evt)
+              })
+              gd2.on('plotly_unhover', evt => {
+                var gd2 = document.getElementById('gd2')
+                var id = evt.points[0].curveNumber;
+                console.log(id);
+                Plotly.restyle(gd2,'fillcolor','rgba(0,0,255,1)', id)
+
+                Plotly.relayout('gd', 'annotations', [])
+                Plotly.relayout('gd', 'shapes', [])
+                // .then(() => console.log('done'))
+                // console.log(evt)
+              })
+
+              // Draw potential
+              var y = [];
+              var y2 = []
+              var x = []
+              for(var i = 0; i < 256; i++) {
+                var xi = -3 + 9 * (i / 256);
+                x.push(xi);
+                y.push( 0.5* (xi - 2) ** 2 + 0.5);
+                y2.push( 0.5* (xi ) ** 2);
+              }
+              Plotly.plot('gd2', {
+                data: [{x: x, y: y, line: {color: 'blue'}}]
+              })
+              .then(() => {
+                Plotly.plot('gd2', {
+                  data: [{x: x, y: y2, line: {color: 'red'}}]
+                })
+              })
+
+              // Draw annotations
+              Plotly.relayout('gd2','annotations', [{
+                  x: 2,
+                  y: -1,
+                  xref: 'x',
+                  yref: 'y',
+                  arrowcolor: 'black',
+
+                  font: { color: 'black'},
+                  showarrow: true,
+                  arrowhead: 2,
+                  startarrowhead: 2,
+                  axref: 'x',
+                  ayref: 'y',
+                  ax: 0,
+                  ay: -1
+              }])
+              return;
+            }
+
+            figure.data[0].fill = 'toself'
+            figure.data[0].fillcolor = 'blue'
+            figure.data[0].line = {
+              color: 'blue'
+            }
+            figure.layout = {
+              showlegend: false,
+              width: 800,
+              height: 800,
+              font: {
+                size: 20
+              },
+              xaxis: {
+                title: '$\\mathrm{Nuclear}\\ \\mathrm{Coordinate} \\ (\\sqrt{\\hbar/(M \\omega)}\\ )$'
+              },
+              yaxis: {
+                title: '$\\mathrm{Redox}\\ \\mathrm{Molecule}\\ \\mathrm{Total}\\ \\mathrm{Energy}\\ (\\hbar \\omega)$',
+                range: [-2, 10]
+              },
+              hovermode: 'closest'
+            };
+            Plotly.plot('gd2', figure)
+            .then(function(gd2) {
+                n += 1;
+                plot2();
+            })
+        })
+      }
+
+      plot();
+      plot2();
+    </script>
+    <style>
+      .svg-container {
+        width:45vw;
+      }
+      .container {
+        width: 800px;
+        margin: 0 auto;
+      }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div id="gd"></div>
+    <div id="gd2"></div>
+  </div>
+</body>
