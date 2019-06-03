@@ -2,8 +2,8 @@
 <html lang='en'>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
-    <!-- <script src='https://39909-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script> -->
-    <script src='http://localhost:3000/build/plotly.js'></script>
+    <script src='https://40200-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script>
+    <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
     <style>
       html, body {
         margin:0; padding:0; background: black;
@@ -90,7 +90,7 @@ function figure(str, i) {
       max: 800,
       target: 600,
       gauge: {
-        shape: (i === 6 || i === 7) ? 'bullet' : 'circular',
+        shape: i > 6 ? 'bullet' : 'circular',
         background: {
             color: 'rgba(255, 255, 255, 0.25)',
             line: {
@@ -122,7 +122,11 @@ function figure(str, i) {
   })
 }
 
-['bignumber', 'bignumber+delta', 'delta', 'gauge+delta', 'bignumber+gauge', 'bignumber+gauge+delta', 'bignumber+gauge', 'bignumber+gauge+delta'].forEach(function(mode, i) {
+[
+  'bignumber', 'bignumber+delta', 'delta',
+  'gauge', 'gauge+bignumber', 'gauge+bignumber+delta', 'gauge+delta',
+  'gauge', 'gauge+bignumber', 'gauge+bignumber+delta', 'gauge+delta'
+].forEach(function(mode, i) {
     figure(mode, i);
 })
 
