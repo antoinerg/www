@@ -18,7 +18,7 @@
       .container {
         text-align: center;
         grid-template-rows: 1fr 1fr;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         display: grid;
         width: 95vw;
       }
@@ -52,7 +52,7 @@
 var container = document.getElementsByClassName('container')[0];
 var interval = 1000;
 
-function figure(str, i) {
+function makeFigure(str, i) {
   var figure = document.createElement('div');
   figure.classList.add('figure');
 
@@ -80,8 +80,7 @@ function figure(str, i) {
       .then(() => update())
     }, interval);
   }
-
-  Plotly.newPlot(gd, {
+  var figure = {
     data: [{
       type: 'indicator',
       title: {
@@ -90,9 +89,8 @@ function figure(str, i) {
       mode: str,
       value: values[values.length - 1],
       max: 800,
-      target: 600,
       gauge: {
-        shape: i > 6 ? 'bullet' : 'circular',
+        shape: i > 6 ? 'bullet' : 'angular',
         bgcolor: 'rgba(255, 255, 255, 0.25)',
         borderwidth: 2,
         bordercolor: 'rgba(255, 255, 255, 0.5)',
@@ -109,6 +107,7 @@ function figure(str, i) {
         reference: values[values.length - 1],
         showpercentage: true
       }
+      }
     }],
     layout: {
         font: {
@@ -121,7 +120,8 @@ function figure(str, i) {
     config: {
         responsive: true
     }
-  }).then(function(gd) {
+  };
+  Plotly.newPlot(gd, figure).then(function(gd) {
       update();
   })
 }
@@ -131,7 +131,7 @@ function figure(str, i) {
   'gauge', 'gauge+bignumber', 'gauge+bignumber+delta', 'gauge+delta',
   'gauge', 'gauge+bignumber', 'gauge+bignumber+delta', 'gauge+delta'
 ].forEach(function(mode, i) {
-    figure(mode, i);
+    makeFigure(mode, i);
 })
 
     </script>
