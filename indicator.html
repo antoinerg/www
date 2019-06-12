@@ -2,8 +2,8 @@
 <html lang='en'>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
-    <script src='https://40200-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script>
-    <!-- <script src='http://localhost:3000/build/plotly.js'></script> -->
+    <!-- <script src='https://40200-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script> -->
+    <script src='http://localhost:3000/build/plotly.js'></script>
     <style>
       html, body {
         margin:0; padding:0; background: black;
@@ -70,7 +70,7 @@ function figure(str, i) {
     setTimeout(function() {
       values.push(values[values.length - 1] + Math.floor((Math.random() - 0.5) * 200));
       Plotly.animate(gd, {
-          data: [{values: values}]
+          data: [{value: values[values.length - 1], delta: {reference: values[values.length - 2]}}]
         }, {
           transition: {
             duration: 500,
@@ -83,26 +83,30 @@ function figure(str, i) {
 
   Plotly.newPlot(gd, {
     data: [{
-      name: 'Value',
       type: 'indicator',
+      title: {
+        text: 'Value'
+      },
       mode: str,
-      values: values,
+      value: values[values.length - 1],
       max: 800,
       target: 600,
       gauge: {
         shape: i > 6 ? 'bullet' : 'circular',
-        background: {
-            color: 'rgba(255, 255, 255, 0.25)',
-            line: {
-              width: 2,
-              color: 'rgba(255, 255, 255, 0.5)'
-            }
-        },
-        target: {
+        bgcolor: 'rgba(255, 255, 255, 0.25)',
+        borderwidth: 2,
+        bordercolor: 'rgba(255, 255, 255, 0.5)',
+        steps: [{
+            range: [0, 600],
             color: 'rgba(255, 255, 0, 0.5)'
+        }],
+        axis: {
+          nticks: 5,
+          tickcolor: 'white'
         }
       },
       delta: {
+        reference: values[values.length - 1],
         showpercentage: true
       }
     }],
