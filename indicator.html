@@ -2,7 +2,8 @@
 <html lang='en'>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
-    <!-- <script src='https://40200-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script> -->
+
+    <!-- <script src='https://41471-45646037-gh.circle-artifacts.com/0/dist/plotly.min.js'></script> -->
     <script src='http://localhost:3000/build/plotly.js'></script>
     <style>
       html, body {
@@ -69,16 +70,29 @@ function makeFigure(str, i) {
   var update = function() {
     setTimeout(function() {
       values.push(values[values.length - 1] + Math.floor((Math.random() - 0.5) * 200));
-      Plotly.animate(gd, {
-          data: [{value: values[values.length - 1], delta: {reference: values[values.length - 2]}}]
-        }, {
-          transition: {
-            duration: 500,
-            easing: 'cubic-in-out'
-          }
-      })
+      // Plotly.animate(gd, {
+      //     data: [{value: values[values.length - 1], delta: {reference: values[values.length - 2]}}]
+      //   }, {
+      //     transition: {
+      //       duration: interval,
+      //       easing: 'cubic-in-out'
+      //     }
+      // })
+      figure.data[0].value = values[values.length - 1];
+      figure.data[0].delta.reference = values[values.length - 2];
+      Plotly.react(gd, figure.data, figure.layout, figure.config)
       .then(() => update())
     }, interval);
+  }
+  var isBullet = i > 6;
+  var domain
+  if(isBullet) {
+    domain = {
+      "x": [0.25, 1],
+      "y": [0.25, 0.5]
+    }
+  } else {
+    domain = null;
   }
   var figure = {
     data: [{
@@ -86,11 +100,11 @@ function makeFigure(str, i) {
       title: {
         text: 'Value'
       },
+      domain: domain,
       mode: str,
       value: values[values.length - 1],
-      max: 800,
       gauge: {
-        shape: i > 6 ? 'bullet' : 'angular',
+        shape: isBullet ? 'bullet' : 'angular',
         bgcolor: 'rgba(255, 255, 255, 0.25)',
         borderwidth: 2,
         bordercolor: 'rgba(255, 255, 255, 0.5)',
@@ -99,17 +113,19 @@ function makeFigure(str, i) {
             color: 'rgba(255, 255, 0, 0.5)'
         }],
         axis: {
+          range: [null, 800],
           nticks: 5,
           tickcolor: 'white'
         }
       },
       delta: {
         reference: values[values.length - 1],
-        showpercentage: true
-      }
+        showpercentage: true,
+        position: 'bottom'
       }
     }],
     layout: {
+        transition: {duration: 500},
         font: {
             color: 'white',
             family: 'Dosis'
@@ -127,9 +143,9 @@ function makeFigure(str, i) {
 }
 
 [
-  'bignumber', 'bignumber+delta', 'delta',
-  'gauge', 'gauge+bignumber', 'gauge+bignumber+delta', 'gauge+delta',
-  'gauge', 'gauge+bignumber', 'gauge+bignumber+delta', 'gauge+delta'
+  'number', 'number+delta', 'delta',
+  'gauge', 'gauge+number', 'gauge+number+delta', 'gauge+delta',
+  'gauge', 'gauge+number', 'gauge+number+delta', 'gauge+delta'
 ].forEach(function(mode, i) {
     makeFigure(mode, i);
 })

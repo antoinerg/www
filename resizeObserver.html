@@ -1,0 +1,42 @@
+<html>
+
+<head>
+  <!-- Plotly.js -->
+  <!-- <script src="http://localhost:3000/build/plotly.js"></script> -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    Plotly.d3.json('https://raw.githubusercontent.com/plotly/plotly.js/master/test/image/mocks/14.json', function(figure) {
+      delete figure.layout.width
+      delete figure.layout.height
+      figure.layout.autosize = true
+      figure.config = {responsive: false}
+
+      console.log(figure);
+      Plotly.plot('gd1', figure)
+      .then(function(gd) {
+        resizeObserver.observe(gd);
+      })
+
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          Plotly.Plots.resize(entry.target);
+        }
+      });
+
+    })
+  </script>
+  <style>
+    #gd1 {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="gd1">
+    <!-- Plotly chart will be drawn inside this DIV -->
+  </div>
+</body>
+
+</html>

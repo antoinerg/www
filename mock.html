@@ -1,0 +1,13 @@
+<head>
+  <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+  <script src="http://localhost:3000/build/plotly.js"></script>
+  <script>
+    Plotly.d3.json('https://raw.githubusercontent.com/plotly/plotly.js/master/test/image/mocks/14.json', function(mock) {
+      Plotly.newPlot('gd', mock);
+    })
+  </script>
+  <!-- <script>if(typeof window.Int16Array !== 'function') document.write("<scri"+"pt src='http://localhost:3000/dist/extras/typedarray.min.js'></scr"+"ipt>");</script> -->
+  <!-- <script>document.write("<scri"+"pt src='http://localhost:3000/dist/extras/request_animation_frame.js'></scr"+"ipt>");</script> -->
+</head>
+
+<div id="gd"></div>
