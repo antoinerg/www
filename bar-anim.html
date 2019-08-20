@@ -1,0 +1,44 @@
+<head>
+  <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+  <script src="http://localhost:3000/build/plotly.js"></script>
+  <script>
+    var library = [
+      'bar_stack-with-gaps',
+      'bar_stackrelative_negative',
+      'bar_group_percent',
+      'style_bar'
+    ]
+    var max
+    var mockName = library[2]
+    var count = 0;
+    function animate(mock) {
+      Plotly.animate('gd', {
+        data: mock.data.map(trace => {return {y: trace.y.map(d => Math.random() * max)}})
+      }, {
+        transition: {
+          duration: 1000,
+          easing: 'exp-out'
+        },
+        frame: {
+          duration: 1000
+        }
+      })
+      .then(() => {
+        count++
+        console.log(`Animation loopped ${count} times`)
+        animate(mock)
+      })
+    }
+    Plotly.d3.json(`https://raw.githubusercontent.com/plotly/plotly.js/master/test/image/mocks/${mockName}.json`, function(mock) {
+      Plotly.newPlot('gd', mock)
+      .then(gd => {
+        max = gd._fullLayout.yaxis.range[1] / mock.data.length
+        console.log(max)
+        window.mock = mock
+        // animate(mock)
+      })
+    })
+  </script>
+</head>
+
+<div id="gd"></div>

@@ -1,0 +1,77 @@
+<head>
+  <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+  <script src="http://localhost:3000/build/plotly.js"></script>
+</head>
+
+<div id="gd0"></div>
+<div id="gd1"></div>
+<div id="gd2"></div>
+<div id="gd3"></div>
+<script>
+  var count = 0
+  var max = 20
+  var orientation = 'v'
+  function generateMock(barmode) {
+    var x = ['A', 'B', 'C']
+    var y = [15, 21, 5]
+    var y1 = [21, 8, 12]
+    return {
+        data: [{
+          type: 'bar',
+          orientation,
+          y: orientation === 'v' ? y : x,
+          x: orientation === 'v' ? x : y,
+          textposition: 'inside',
+          text: x
+        }, {
+          type: 'bar',
+          orientation,
+          y: orientation === 'v' ? y1 : x,
+          x: orientation === 'v' ? x : y1,
+          textposition: 'inside',
+          text: x
+        }],
+        layout: {
+          barmode: barmode,
+          title: {
+            text: barmode
+          },
+          height: 200,
+          margin: {b:25, t: 25}
+        }
+      }
+  }
+  var mock = generateMock('stack')
+
+  function animate(domID) {
+    var newFrame = {
+      data: mock.data.map(trace => {
+        var newValues = trace.x.map(d => Math.random() * max)
+        if(orientation === 'v') return {y: newValues}
+        if(orientation === 'h') return {x: newValues}
+      })
+    }
+    Plotly.animate(domID, newFrame , {
+      transition: {
+        duration: 10000,
+        easing: 'linear'
+      },
+      frame: {
+        duration: 10000
+      }
+    })
+    .then(() => {
+      count++
+      console.log(`Animation loopped ${count} times`)
+      animate(domID)
+    })
+  }
+
+ ['stack', 'group', 'overlay', 'relative'].forEach(function(mode, i) {
+   var gd = `gd${i}`
+   var mock = generateMock(mode)
+   Plotly.newPlot(gd, mock)
+     .then(gd => {animate(gd)})
+ })
+
+</script>
